@@ -33,11 +33,12 @@ java -jar ConcourseCCtray.java ^
 
 Bash
 ```bash
-java -jar ConcourseCCtray.java \
--Dconccourse.username={username} \
--Dconcourse.password={password} \
--Dconcourse.team={team} \
--Dconcourse.url={url}
+SERVER_PORT=8080 java \
+  -Dconcourse.username={username} \
+  -Dconcourse.password="{password}" \
+  -Dconcourse.team={team} \
+  -Dconcourse.url="{url}" \
+  -jar target/ConcourseCCtray-*.jar
 ```
 
 Running for multiple Teams 
