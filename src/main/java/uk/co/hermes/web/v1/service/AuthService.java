@@ -1,5 +1,8 @@
 package uk.co.hermes.web.v1.service;
 
+import org.apache.commons.codec.binary.Base64;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -11,10 +14,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import uk.co.hermes.web.v1.controllers.SpotterConfiguration;
 
+import java.util.TimeZone;
+
 @Component
 public class AuthService {
 
     private String authToken;
+
+    private DateTime expirartionDate;
 
     private SpotterConfiguration configuration;
 
@@ -26,6 +33,18 @@ public class AuthService {
     @Cacheable("AuthToken")
     public void authenticate(){
 
+        getAuthentication();
+        String[] authTokenSplit = authToken.split("\\.");
+
+        byte[] byteArray = Base64.decodeBase64(authTokenSplit[1].getBytes());
+        String decodedString = new String(byteArray);
+        JSONObject obj = new JSONObject(decodedString);
+        Long val = obj.getLong("exp");
+        expirartionDate = new DateTime(val * 1000, DateTimeZone.forTimeZone(TimeZone.getTimeZone("UTC")));
+
+    }
+
+    private void getAuthentication() {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", configuration.getAuthHeaderValue());
@@ -39,6 +58,9 @@ public class AuthService {
     }
 
     String getAuthToken() {
+        if (this.expirartionDate.minusHours(2).isBeforeNow()){
+            getAuthentication();
+        }
         return authToken;
     }
 }
