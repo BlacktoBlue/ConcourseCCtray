@@ -61,7 +61,7 @@ public class JobService {
                 try {
                     _job = objectMapper.readValue(job.toString(), Job.class);
                     this.buildCounter = 5;
-                    if(_job.getFinishedBuild().getStatus().equalsIgnoreCase("aborted") && !configuration.showAbortedAsFailed()){
+                    if(_job.getFinishedBuild() != null && _job.getFinishedBuild().getStatus().equalsIgnoreCase("aborted") && !configuration.showAbortedAsFailed()){
                         Build finishedBuild = getLastNonAbortedBuildFromConcourse(pipeline.getName(), _job.getName() , Integer.parseInt(_job.getFinishedBuild().getName()) - 1);
                         if (finishedBuild != null) {
                             _job.setFinishedBuild(finishedBuild);
@@ -96,7 +96,7 @@ public class JobService {
         JSONObject results = new JSONObject(response.getBody());
 
         Build build = objectMapper.readValue(results.toString(), Build.class);
-        if (build.getStatus().equalsIgnoreCase("aborted") && this.buildCounter > 0) {
+        if (build.getStatus().equalsIgnoreCase("aborted") && this.buildCounter > 0 && buildNo > 1) {
             return getLastNonAbortedBuildFromConcourse(pipelineName, jobName, buildNo - 1);
         }
         return build;
