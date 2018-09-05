@@ -18,6 +18,9 @@ public class SpotterConfiguration {
     @Value("${concourse.team}")
     private String team;
 
+    @Value("${showAbortedAsFailed}")
+    private boolean showAbortedAsFailed;
+
     private String authHeaderValue ="";
 
     public String getAuthHeaderValue(){
@@ -51,5 +54,9 @@ public class SpotterConfiguration {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public boolean showAbortedAsFailed() {
+        return showAbortedAsFailed;
     }
 }

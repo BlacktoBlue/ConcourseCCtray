@@ -54,4 +54,8 @@ public class Job {
     public Build getFinishedBuild() {
         return finishedBuild;
     }
+
+    public void setFinishedBuild(Build finishedBuild) {
+        this.finishedBuild = finishedBuild;
+    }
 }

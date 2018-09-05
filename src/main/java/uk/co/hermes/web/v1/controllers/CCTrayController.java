@@ -1,5 +1,7 @@
 package uk.co.hermes.web.v1.controllers;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.IOException;
 import java.io.StringWriter;
 
 @RestController
@@ -36,7 +39,7 @@ public class CCTrayController {
     public String cctray(HttpServletRequest request,
                          @RequestParam(value = "team", required = false) String team,
                          @RequestParam(value = "url", required = false) String url)
-            throws TransformerException {
+            throws TransformerException, IOException, JsonParseException, JsonMappingException {
 
         if(request.getHeader("Authorization") != null &&
                 !request.getHeader("Authorization").isEmpty()) {
