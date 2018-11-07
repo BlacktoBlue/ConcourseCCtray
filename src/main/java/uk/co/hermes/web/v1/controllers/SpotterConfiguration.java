@@ -23,7 +23,7 @@ public class SpotterConfiguration {
 
     private String authHeaderValue ="";
 
-    public String getAuthHeaderValue(){
+    public String getAuthHeaderValue(String username, String password){
         if (authHeaderValue.isEmpty()) {
             String usernameAndPassword = username + ":" + password;
             return "Basic " + java.util.Base64.getEncoder().encodeToString(usernameAndPassword.getBytes());
@@ -40,8 +40,16 @@ public class SpotterConfiguration {
         return team;
     }
 
-    public String getAPITeamURL(){
-        return url + "/api/v1/teams/" + team;
+    public String getAPITeamsURL(){
+        return url + "/api/v1/teams/";
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setAuthHeaderValue(String authHeaderValue){

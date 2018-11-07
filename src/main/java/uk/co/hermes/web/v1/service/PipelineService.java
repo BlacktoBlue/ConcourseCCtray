@@ -26,19 +26,22 @@ public class PipelineService {
     }
 
     @Cacheable("Pipelines")
-    public List<Pipeline> getPipelinesFromConcourse() {
+    public List<Pipeline> getPipelinesFromConcourse(String teamName) {
+        String username = configuration.getUsername();
+        String password = configuration.getPassword();
+
         List<Pipeline> pipelines = new ArrayList<>();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON.toString());
-        headers.add("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken() + "\"");
+        headers.add("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken(username, password) + "\"");
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<String> response;
 
-        headers.set("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken() + "\"");
-        response = restTemplate.exchange(configuration.getAPITeamURL() + "/pipelines",
+        headers.set("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken(username, password) + "\"");
+        response = restTemplate.exchange(configuration.getAPITeamsURL() + teamName + "/pipelines",
                 HttpMethod.GET, entity, String.class);
 
         JSONArray results = new JSONArray(response.getBody());

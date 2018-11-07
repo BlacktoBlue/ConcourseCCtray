@@ -31,9 +31,9 @@ public class AuthService {
     }
 
     @Cacheable("AuthToken")
-    public void authenticate(){
+    public void authenticate(String teamName, String username, String password){
 
-        getAuthentication();
+        getAuthentication(teamName, username, password);
         String[] authTokenSplit = authToken.split("\\.");
 
         byte[] byteArray = Base64.decodeBase64(authTokenSplit[1].getBytes());
@@ -44,22 +44,22 @@ public class AuthService {
 
     }
 
-    private void getAuthentication() {
+    private void getAuthentication(String teamName, String username, String password) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", configuration.getAuthHeaderValue());
+        headers.set("Authorization", configuration.getAuthHeaderValue(username, password));
 
         HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(configuration.getAPITeamURL() + "/auth/token",
+        ResponseEntity<String> response = restTemplate.exchange(configuration.getAPITeamsURL() + teamName + "/auth/token",
                 HttpMethod.GET, entity, String.class);
 
         this.authToken = new JSONObject(response.getBody()).getString("value");
     }
 
-    String getAuthToken() {
+    String getAuthToken(String username, String password) {
         if (this.expirartionDate.minusHours(2).isBeforeNow()){
-            getAuthentication();
+            getAuthentication(configuration.getTeam(), username, password);
         }
         return authToken;
     }

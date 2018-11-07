@@ -34,24 +34,27 @@ public class JobService {
 
     public void getJobsFromConcourse() {
         jobsOnPipelines = new ArrayList<>();
+        String team = configuration.getTeam();
+        String username = configuration.getUsername();
+        String password = configuration.getPassword();
 
-        authService.authenticate();
+        authService.authenticate(team, username, password);
 
-        List<Pipeline> pipelines = pipelineService.getPipelinesFromConcourse();
+        List<Pipeline> pipelines = pipelineService.getPipelinesFromConcourse(team);
 
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON.toString());
-        headers.add("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken() + "\"");
+        headers.add("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken(username, password) + "\"");
 
         ObjectMapper objectMapper = new ObjectMapper();
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         pipelines.forEach(pipeline -> {
             ResponseEntity<String> response;
-            headers.set("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken() + "\"");
-            response = restTemplate.exchange(configuration.getAPITeamURL() + "/pipelines/" + pipeline.getName() + "/jobs",
+            headers.set("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken(username, password) + "\"");
+            response = restTemplate.exchange(configuration.getAPITeamsURL() + team + "/pipelines/" + pipeline.getName() + "/jobs",
                     HttpMethod.GET, entity, String.class);
 
             JSONArray results = new JSONArray(response.getBody());
@@ -76,21 +79,25 @@ public class JobService {
     }
 
     private Build getLastNonAbortedBuildFromConcourse(String pipelineName, String jobName, int buildNo) throws IOException{
+        String team = configuration.getTeam();
+        String username = configuration.getUsername();
+        String password = configuration.getPassword();
+
         this.buildCounter -= 1;
-        authService.authenticate();
+        authService.authenticate(team, username, password);
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON.toString());
-        headers.add("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken() + "\"");
+        headers.add("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken(username, password) + "\"");
 
         ObjectMapper objectMapper = new ObjectMapper();
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
 
         ResponseEntity<String> response;
-        headers.set("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken() + "\"");
-        response = restTemplate.exchange(configuration.getAPITeamURL() + "/pipelines/" + pipelineName + "/jobs/" + jobName + "/builds/" + buildNo,
+        headers.set("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken(username, password) + "\"");
+        response = restTemplate.exchange(configuration.getAPITeamsURL() + team + "/pipelines/" + pipelineName + "/jobs/" + jobName + "/builds/" + buildNo,
                 HttpMethod.GET, entity, String.class);
 
         JSONObject results = new JSONObject(response.getBody());
