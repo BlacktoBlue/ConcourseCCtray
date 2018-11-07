@@ -36,15 +36,9 @@ public class CCTrayController {
     @RequestMapping(
             value = "/cctray.xml",
             produces = MediaType.APPLICATION_XML_VALUE)
-    public String cctray(HttpServletRequest request,
-                         @RequestParam(value = "team", required = false) String team,
+    public String cctray(@RequestParam(value = "team", required = false) String team,
                          @RequestParam(value = "url", required = false) String url)
-            throws TransformerException, IOException, JsonParseException, JsonMappingException {
-
-        if(request.getHeader("Authorization") != null &&
-                !request.getHeader("Authorization").isEmpty()) {
-            configuration.setAuthHeaderValue(request.getHeader("Authorization"));
-        }
+            throws TransformerException {
 
         if(team != null && !team.isEmpty()){
             configuration.setTeam(team);

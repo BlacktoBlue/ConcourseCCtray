@@ -21,15 +21,9 @@ public class SpotterConfiguration {
     @Value("${showAbortedAsFailed}")
     private boolean showAbortedAsFailed;
 
-    private String authHeaderValue ="";
-
     public String getAuthHeaderValue(String username, String password){
-        if (authHeaderValue.isEmpty()) {
             String usernameAndPassword = username + ":" + password;
             return "Basic " + java.util.Base64.getEncoder().encodeToString(usernameAndPassword.getBytes());
-        } else {
-            return authHeaderValue;
-        }
     }
 
     public String getUrl() {
@@ -50,10 +44,6 @@ public class SpotterConfiguration {
 
     public String getPassword() {
         return password;
-    }
-
-    public void setAuthHeaderValue(String authHeaderValue){
-        this.authHeaderValue = authHeaderValue;
     }
 
     public void setTeam(String team) {
