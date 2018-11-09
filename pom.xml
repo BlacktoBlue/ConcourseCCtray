@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.springframework</groupId>
+    <groupId>uk.co.hermes.common_infrastructure</groupId>
     <artifactId>ConcourseCCtray</artifactId>
-    <version>0.1.10</version>
+    <version>0.1.11</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

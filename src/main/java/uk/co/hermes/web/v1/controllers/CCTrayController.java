@@ -20,6 +20,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Base64;
 
 @RestController
 public class CCTrayController {
@@ -36,8 +38,11 @@ public class CCTrayController {
     @RequestMapping(
             value = "/cctray.xml",
             produces = MediaType.APPLICATION_XML_VALUE)
-    public String cctray(@RequestParam(value = "team", required = false) String team,
-                         @RequestParam(value = "url", required = false) String url)
+    public String cctray(HttpServletRequest request,
+                         @RequestParam(value = "team", required = false) String team,
+                         @RequestParam(value = "url", required = false) String url,
+                         @RequestParam(value = "username", required = false) String username,
+                         @RequestParam(value = "password", required = false) String password)
             throws TransformerException {
 
         if(team != null && !team.isEmpty()){
@@ -46,6 +51,22 @@ public class CCTrayController {
 
         if(url != null && !url.isEmpty()){
             configuration.setUrl(url);
+        }
+
+        if(request.getHeader("Authorization") != null &&
+                !request.getHeader("Authorization").isEmpty()) {
+            String encodedUsernameAndPassword = request.getHeader("Authorization").replace("Basic ", "");
+            String[] usernameAndPassword = new String(Base64.getDecoder().decode(encodedUsernameAndPassword)).split(":");
+            configuration.setUsername(usernameAndPassword[0]);
+            configuration.setPassword(usernameAndPassword[1]);
+        }
+
+        if(username != null && !username.isEmpty()){
+            configuration.setUsername(username);
+        }
+
+        if(password != null && !password.isEmpty()){
+            configuration.setPassword(password);
         }
 
 

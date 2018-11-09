@@ -46,6 +46,14 @@ public class SpotterConfiguration {
         return password;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public void setTeam(String team) {
         this.team = team;
     }
