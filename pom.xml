@@ -5,7 +5,7 @@
 
     <groupId>uk.co.hermes.common_infrastructure</groupId>
     <artifactId>ConcourseCCtray</artifactId>
-    <version>0.1.11</version>
+    <version>0.1.12</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -50,12 +50,6 @@
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>2.10.2.2.21</version>
-        </dependency>
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <version>3.1.0</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>

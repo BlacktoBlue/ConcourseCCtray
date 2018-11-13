@@ -64,8 +64,15 @@ public class JobService {
                 try {
                     _job = objectMapper.readValue(job.toString(), Job.class);
                     this.buildCounter = 5;
-                    if(_job.getFinishedBuild() != null && _job.getFinishedBuild().getStatus().equalsIgnoreCase("aborted") && !configuration.showAbortedAsFailed()){
-                        Build finishedBuild = getLastNonAbortedBuildFromConcourse(pipeline.getName(), _job.getName() , Integer.parseInt(_job.getFinishedBuild().getName()) - 1);
+                    if(_job.getFinishedBuild() != null &&
+                            _job.getFinishedBuild().getStatus().equalsIgnoreCase("aborted") &&
+                            !configuration.showAbortedAsFailed())
+                    {
+                        int buildNo = Integer.parseInt(_job.getFinishedBuild().getName()) - 1;
+                        Build finishedBuild =
+                                getLastNonAbortedBuildFromConcourse(pipeline.getName(),
+                                                _job.getName() ,
+                                                buildNo, authService.getAuthToken(username, password));
                         if (finishedBuild != null) {
                             _job.setFinishedBuild(finishedBuild);
                         }
@@ -78,25 +85,21 @@ public class JobService {
         });
     }
 
-    private Build getLastNonAbortedBuildFromConcourse(String pipelineName, String jobName, int buildNo) throws IOException{
+    private Build getLastNonAbortedBuildFromConcourse(String pipelineName, String jobName, int buildNo, String authtoken) throws IOException{
         String team = configuration.getTeam();
-        String username = configuration.getUsername();
-        String password = configuration.getPassword();
 
         this.buildCounter -= 1;
-        authService.authenticate(team, username, password);
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON.toString());
-        headers.add("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken(username, password) + "\"");
+        headers.add("Cookie", "ATC-Authorization=\"Bearer " + authtoken + "\"");
 
         ObjectMapper objectMapper = new ObjectMapper();
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-
         ResponseEntity<String> response;
-        headers.set("Cookie", "ATC-Authorization=\"Bearer " + authService.getAuthToken(username, password) + "\"");
+        headers.set("Cookie", "ATC-Authorization=\"Bearer " + authtoken + "\"");
         response = restTemplate.exchange(configuration.getAPITeamsURL() + team + "/pipelines/" + pipelineName + "/jobs/" + jobName + "/builds/" + buildNo,
                 HttpMethod.GET, entity, String.class);
 
@@ -104,7 +107,7 @@ public class JobService {
 
         Build build = objectMapper.readValue(results.toString(), Build.class);
         if (build.getStatus().equalsIgnoreCase("aborted") && this.buildCounter > 0 && buildNo > 1) {
-            return getLastNonAbortedBuildFromConcourse(pipelineName, jobName, buildNo - 1);
+            return getLastNonAbortedBuildFromConcourse(pipelineName, jobName, buildNo - 1, authtoken);
         }
         return build;
     }
