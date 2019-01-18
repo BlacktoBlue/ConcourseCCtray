@@ -5,7 +5,7 @@
 
     <groupId>uk.co.hermes.common_infrastructure</groupId>
     <artifactId>ConcourseCCtray</artifactId>
-    <version>0.1.13.2</version>
+    <version>0.1.13.3</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

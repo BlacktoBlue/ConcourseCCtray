@@ -64,19 +64,19 @@ public class JobService {
                 try {
                     _job = objectMapper.readValue(job.toString(), Job.class);
                     this.buildCounter = 5;
-                    int buildNo = Integer.parseInt(_job.getFinishedBuild().getName());
-                    if(_job.getFinishedBuild() != null &&
-                            _job.getFinishedBuild().getStatus().equalsIgnoreCase("aborted") &&
-                            !configuration.showAbortedAsFailed() &&
-                            buildNo > 1)
-                    {
-                        Build finishedBuild =
-                                getLastNonAbortedBuildFromConcourse(pipeline.getName(),
-                                        _job.getName(),
-                                        buildNo -1,
-                                        authService.getAuthToken(username, password));
-                        if (finishedBuild != null) {
-                            _job.setFinishedBuild(finishedBuild);
+                    if(_job.getFinishedBuild() != null) {
+                        int buildNo = Integer.parseInt(_job.getFinishedBuild().getName());
+                        if (_job.getFinishedBuild().getStatus().equalsIgnoreCase("aborted") &&
+                                !configuration.showAbortedAsFailed() &&
+                                buildNo > 1) {
+                            Build finishedBuild =
+                                    getLastNonAbortedBuildFromConcourse(pipeline.getName(),
+                                            _job.getName(),
+                                            buildNo - 1,
+                                            authService.getAuthToken(username, password));
+                            if (finishedBuild != null) {
+                                _job.setFinishedBuild(finishedBuild);
+                            }
                         }
                     }
                 } catch (IOException e) {
